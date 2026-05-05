@@ -1,9 +1,14 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "@/store/cart";
 import { Trash2 } from "lucide-react";
+import { useState } from "react";
+import DemoPaymentModal from "@/components/store/DemoPaymentModal";
+import { toast } from "sonner";
 
 export default function Cart() {
-  const { items, setQty, remove, total } = useCart();
+  const { items, setQty, remove, total, clear } = useCart();
+  const [payOpen, setPayOpen] = useState(false);
+  const nav = useNavigate();
 
   if (items.length === 0) {
     return (
@@ -46,9 +51,24 @@ export default function Cart() {
             <div className="flex justify-between"><span className="text-muted-foreground">Shipping</span><span className="text-success">Free</span></div>
             <div className="border-t pt-2 mt-2 flex justify-between font-bold text-base"><span>Total</span><span className="text-price">${total().toFixed(2)}</span></div>
           </div>
-          <Link to="/order/8e752f" className="mt-5 block text-center bg-primary text-primary-foreground py-3 rounded-md font-semibold hover:opacity-90">Checkout</Link>
+          <button onClick={() => setPayOpen(true)} className="mt-5 w-full bg-primary text-primary-foreground py-3 rounded-md font-semibold hover:opacity-90">
+            Pay ${total().toFixed(2)}
+          </button>
+          <p className="text-[11px] text-muted-foreground text-center mt-2">Demo payment — no real money charged</p>
         </aside>
       </div>
+
+      <DemoPaymentModal
+        open={payOpen}
+        amount={total()}
+        onClose={() => setPayOpen(false)}
+        onSuccess={(id) => {
+          setPayOpen(false);
+          toast.success(`Payment successful • ${id}`);
+          clear();
+          nav("/order/" + id.slice(4, 10));
+        }}
+      />
     </div>
   );
 }
