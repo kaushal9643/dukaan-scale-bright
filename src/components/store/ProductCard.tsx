@@ -6,7 +6,9 @@ export default function ProductCard({ p }: { p: Product }) {
   return (
     <Link to={`/products/${p.slug}`} className="group bg-background rounded-xl border overflow-hidden shadow-card hover:shadow-elevated transition">
       <div className="relative aspect-square bg-secondary overflow-hidden">
-        <img src={p.image} alt={p.title} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
+        <img src={p.image} alt={p.title} loading="lazy"
+          onError={(e) => { (e.currentTarget as HTMLImageElement).src = "/placeholder.svg"; }}
+          className="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
         {p.badge && (
           <span className="absolute top-3 left-3 bg-accent text-accent-foreground text-xs font-bold px-2 py-1 rounded">{p.badge}</span>
         )}
